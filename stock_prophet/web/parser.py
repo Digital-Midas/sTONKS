@@ -3,9 +3,6 @@ from bs4 import BeautifulSoup
 import urllib.request as urlreq
 import urllib.parse as urlparse
 
-URL_for_company_search = "https://www.google.com/search"
-PARAMS_search = {'q': 'default'}
-SELECTOR_search_first = "#rso > div > div > div:nth-child(1) > div > div.rc > div.r > a"
 URL_for_current = "https://markets.businessinsider.com/"
 SELECTOR_current_price = "#site > div > div:nth-child(2) > div.row.equalheights.greyBorder > div > div:nth-child(3) > div.col-sm-10.no-padding > div.col-xs-12.no-padding > div:nth-child(2) > span"
 URL_for_quotes = "http://export.finam.ru/quotes.txt"
@@ -33,10 +30,6 @@ PARAMS_quotes = {
     'datf': 1,
     'at': 1,
 }
-proxies = {
-    "http": "95.79.99.148:3128"
-}
-
 """
 market - id биржи
 em - id фирмы
@@ -68,17 +61,6 @@ def get_current_stock_price(company_id):
     soup = BeautifulSoup(response.text, "lxml")
     price = str(soup.select_one(SELECTOR_current_price).text).replace(",", "")
     return float(price)
-
-
-def find_company(name):
-    params = PARAMS_search.copy()
-    params['q'] = "finam" + name
-    search_response = requests.get(URL_for_company_search, params=params, proxies=proxies)
-    print(search_response.text)
-
-    soup = BeautifulSoup(search_response.text, "lxml")
-    link = soup.select_one(SELECTOR_search_first)
-    return link
 
 
 """

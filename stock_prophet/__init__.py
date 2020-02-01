@@ -1,5 +1,5 @@
-import web.parser as parser
+from web import browser
 
 
-print(parser.find_company('google'))
+browser.fill_all_markets_and_companies()
 
