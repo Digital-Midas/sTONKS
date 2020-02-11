@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Date, ForeignKey, DECIMAL
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Date, ForeignKey, Float
 import psycopg2
 
 
@@ -22,33 +22,36 @@ def create_table(meta_data):
     try:
         stoks = Table(
             'stoks', meta_data,
-            Column('id_org', Integer, primary_key=True),
-            Column('id_company', Integer),
-            Column('org_name', String),
-            Column('date', Date),
-            Column('stock_price', DECIMAL)
+            Column('id_company', Integer, primary_key=True),
+            Column('date', Date, primary_key=True),
+            Column('high', Float),
+            Column('low', Float),
+            Column('open', Float),
+            Column('close', Float),
+            Column('vol', Float)
+
         )   
 
         analytics = Table(
             'analytics', meta_data,
-            Column('id_anal', Integer, ForeignKey('stoks.id_org')),
+            Column('id_anal', Integer, ForeignKey('stoks.id_company')),
             Column('name', String),
-            Column('rating', DECIMAL)
+            Column('rating', Float)
         )
 
         markets = Table(
             'markets', meta_data,
-            Column('id_market', Integer),
+            Column('id_market', Integer, primary_key=True),
             Column('name', String),
             Column('linkname', String)
         )
 
         company = Table(
             'company', meta_data,
-            Column('id_compamy', Integer),
+            Column('id_compamy', Integer, ForeignKey('stoks.id_company')),
             Column('name', String),
             Column('linkname', String),
-            Column('id_market', Integer)
+            Column('id_market', Integer, ForeignKey('markets.id_market'))
         )
     except sqlalchemy.exc.InvalidRequestError:
         print("All table is already.")
