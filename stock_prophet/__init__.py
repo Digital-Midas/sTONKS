@@ -1,5 +1,6 @@
-from web import browser
+from web import parser
+
+print(parser.get_quotes(1,2,3))
 
 
-browser.fill_all_markets_and_companies()
 

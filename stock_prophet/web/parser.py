@@ -1,10 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-import urllib.request as urlreq
+import urllib
 import urllib.parse as urlparse
+import urllib.request as urlreq
 
-URL_for_current = "https://markets.businessinsider.com/"
-SELECTOR_current_price = "#site > div > div:nth-child(2) > div.row.equalheights.greyBorder > div > div:nth-child(3) > div.col-sm-10.no-padding > div.col-xs-12.no-padding > div:nth-child(2) > span"
+USERNAME = "+79997900630"
+PASSWORD = "WsJ6V7"
+URL = "https://www.finam.ru"
+SELECTOR_current_price = "#issuer-profile-informer-last"
 URL_for_quotes = "http://export.finam.ru/quotes.txt"
 PARAMS_quotes = {
     'market': 1,
@@ -50,41 +53,23 @@ at — добавлять заголовок в файл (0 — нет, 1 — д
 
 def get_quotes(company_id, date_from, date_to):
     params = urlparse.urlencode(PARAMS_quotes)
-    response = urlreq.urlopen(URL_for_quotes + "?" + params)
-    print(URL_for_quotes + "?" + params)
-    return response
+    request = urlreq.Request(URL_for_quotes + "?" + params)
+    response = urlreq.urlopen(request)
+    return response.read()
 
 
-def get_current_stock_price(company_id):
-    url = URL_for_current + "stocks/" + company_id + "-stock"
-    response = requests.get(url)
+def get_current_stock_price(company_link_name, market_link_name):
+    session = get_login_finam_session()
+    url = URL + "/profile/" + market_link_name + "/" + company_link_name
+    response = session.get(url)
     soup = BeautifulSoup(response.text, "lxml")
-    price = str(soup.select_one(SELECTOR_current_price).text).replace(",", "")
-    return float(price)
+    price = str(soup.select_one(SELECTOR_current_price).text)
+    return price
 
 
-"""
-http://export.finam.ru/quotes?
-market=1&
-em=175924&
-code=POLY&
-cn=POLY&
-apply=0&
-df=1&
-mf=0&
-yf=2000&
-dt=1&
-mt=0&
-yt=2020&
-p=8&
-e=.txt&
-dtf=4&
-tmf=3&
-MSOR=1&
-mstime=on&
-mstimever=1&
-sep=1&
-sep2=1&
-datf=1&
-at=1
-"""
+def get_login_finam_session():
+    session = requests.Session()
+    session.verify = False
+    resp = session.post(URL + '/home/login/', data={'fau_login': USERNAME, 'fau_pass': PASSWORD})
+    return session
+
