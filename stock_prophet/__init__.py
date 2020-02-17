@@ -1,6 +1,8 @@
-from web import parser
+from data import Database
+from web import browser
 
-print(parser.get_quotes(1,2,3))
+db = Database()
+browser.fill_all_markets_and_companies(db)
 
 
 

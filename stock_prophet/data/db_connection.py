@@ -1,5 +1,6 @@
 import sqlalchemy
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Date, ForeignKey, Float
+import psycopg2
 
 
 def connect(user, password, database, host, port):
@@ -29,7 +30,6 @@ def create_table(meta_data):
             Column('open', Float),
             Column('close', Float),
             Column('vol', Float)
-
         )
 
         analytics = Table(
@@ -48,7 +48,7 @@ def create_table(meta_data):
 
         company = Table(
             'company', meta_data,
-            Column('id_compamy', Integer, primary_key=True),
+            Column('id_compamy', Integer, primary_key=True, autoincrement=True),
             Column('name', String),
             Column('linkname', String),
             Column('id_market', Integer, ForeignKey('markets.id_market'))
