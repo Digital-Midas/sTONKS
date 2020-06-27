@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import urllib
 import urllib.parse as urlparse
 import urllib.request as urlreq
 

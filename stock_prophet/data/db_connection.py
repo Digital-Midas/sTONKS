@@ -1,11 +1,9 @@
 import sqlalchemy
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Date, ForeignKey, Float
-import psycopg2
-
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Date, ForeignKey, Float, UniqueConstraint
 
 def connect(user, password, database, host, port):
     # postgresql://user:password@host:port/database
-    url = 'postgresql+psycopg2://{}:{}@{}:{}/{}'
+    url = 'postgresql://{}:{}@{}:{}/{}'
     url = url.format(user, password, host, port, database)
 
     try:
@@ -23,7 +21,7 @@ def create_table(meta_data):
     try:
         stoks = Table(
             'stoks', meta_data,
-            Column('id_company', Integer, ForeignKey('company.id_company'), primary_key=True),
+            Column('id_company', Integer, ForeignKey('companies.id'), primary_key=True),
             Column('date', Date, primary_key=True),
             Column('high', Float),
             Column('low', Float),
@@ -34,29 +32,31 @@ def create_table(meta_data):
 
         analytics = Table(
             'analytics', meta_data,
-            Column('id_anal', Integer, primary_key=True),
+            Column('id', Integer, primary_key=True, unique=True),
             Column('name', String),
             Column('rating', Float)
         )
 
         markets = Table(
             'markets', meta_data,
-            Column('id_market', Integer, primary_key=True),
+            Column('id', Integer, primary_key=True, unique=True),
             Column('name', String),
-            Column('linkname', String)
+            Column('link_name', String)
         )
 
-        company = Table(
-            'company', meta_data,
-            Column('id_compamy', Integer, primary_key=True, autoincrement=True),
+        companies = Table(
+            'companies', meta_data,
+            Column('id', Integer, primary_key=True, unique=True),
             Column('name', String),
-            Column('linkname', String),
-            Column('id_market', Integer, ForeignKey('markets.id_market'))
+            Column('link_name', String),
+            Column('code', String),
+            Column('id_market', Integer, ForeignKey('markets.id')),
+            UniqueConstraint('id_market', 'link_name', name='Unique pair of link_name and id_market')
         )
     except sqlalchemy.exc.InvalidRequestError:
         print("All table is already.")
         return meta_data.tables['stoks'], meta_data.tables['analytics'], \
-               meta_data.tables['markets'], meta_data.tables['company']
+               meta_data.tables['markets'], meta_data.tables['companies']
     else:
-        return stoks, analytics, markets, company
+        return stoks, analytics, markets, companies
 

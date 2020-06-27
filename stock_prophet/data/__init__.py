@@ -1,10 +1,11 @@
 import data.db_connection as connector
+import os
 
-USERNAME = 'stonkboy'
-PASSWORD = 'stonks228'
-DB_NAME = 'stonks_db'
-HOST = 'localhost'
-PORT = '5432'
+USERNAME = os.environ.get('USERNAME')
+PASSWORD = os.environ.get('PASSWORD')
+DB_NAME = os.environ.get('DB_NAME')
+HOST = os.environ.get('HOST')
+PORT = os.environ.get('PORT')
 
 
 class Database:
@@ -14,8 +15,8 @@ class Database:
 
         if self.engine:
             self.stocks, self.analytics, self.markets, self.companies = connector.create_table(self.meta_data)
-
             self.meta_data.create_all(self.engine)
+
             print("Connect successful! You're awesome!")
         else:
             print("Connect is poo!")
