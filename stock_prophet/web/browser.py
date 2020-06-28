@@ -155,7 +155,7 @@ def fill_all_markets_and_companies(db):
         market_list = exec_with_retry(lambda: driver
                                       .find_elements_by_class_name("finam-ui-dropdown-list")[0]
                                       .find_elements_by_tag_name("a"))
-        for index_market in range(25, len(market_list)):
+        for index_market in range(len(market_list) - 1, 1, -1):
             start_index_company = 1
             while True:
                 if not exec_with_retry(lambda: market_list[index_market].is_displayed()):

@@ -1,11 +1,18 @@
 import data.db_connection as connector
 import os
+from dotenv import load_dotenv
 
-USERNAME = os.environ.get('USERNAME')
-PASSWORD = os.environ.get('PASSWORD')
+dotenv_path = os.path.join('./../.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+else:
+    print('Can`t find .env file.')
+
+USERNAME = os.environ.get('DB_USERNAME')
+PASSWORD = os.environ.get('DB_PASSWORD')
 DB_NAME = os.environ.get('DB_NAME')
-HOST = os.environ.get('HOST')
-PORT = os.environ.get('PORT')
+HOST = os.environ.get('DB_HOST')
+PORT = os.environ.get('DB_PORT')
 
 
 class Database:
